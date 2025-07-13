@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Math Magic Kingdom - Fun Math Games for Kids</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="site-wrapper">
+        <header class="main-header">
+            <div class="header-content">
+                <h1 class="site-title">
+                    <span class="magic-icon">🏰</span>
+                    Math Magic Kingdom
+                    <span class="magic-icon">✨</span>
+                </h1>
+                <p class="site-tagline">Where Learning Math is an Adventure!</p>
+            </div>
+            <div class="floating-shapes">
+                <div class="shape shape-1">+</div>
+                <div class="shape shape-2">−</div>
+                <div class="shape shape-3">×</div>
+                <div class="shape shape-4">÷</div>
+                <div class="shape shape-5">🌟</div>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <section class="hero-section">
+                <h2 class="section-title">Choose Your Math Adventure!</h2>
+                <p class="section-subtitle">Pick a game and start your magical math journey</p>
+            </section>
+
+            <section class="games-gallery" id="gamesGallery">
+                <!-- Games will be dynamically loaded here -->
+            </section>
+
+            <section class="features-section">
+                <h2 class="section-title">Why Kids Love Math Magic Kingdom</h2>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">🎮</div>
+                        <h3>Fun Games</h3>
+                        <p>Interactive games that make learning enjoyable</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🏆</div>
+                        <h3>Earn Rewards</h3>
+                        <p>Score points and unlock achievements</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">📚</div>
+                        <h3>Learn & Grow</h3>
+                        <p>Build strong math skills while having fun</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🌈</div>
+                        <h3>Colorful Design</h3>
+                        <p>Beautiful visuals that engage young minds</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="main-footer">
+            <p>&copy; 2024 Math Magic Kingdom. Made with ❤️ for young mathematicians!</p>
+        </footer>
+    </div>
+
+    <div id="gameModal" class="game-modal">
+        <div class="modal-content">
+            <button class="close-button" onclick="closeGame()">&times;</button>
+            <iframe id="gameFrame" class="game-frame"></iframe>
+        </div>
+    </div>
+
+    <script src="games-data.js"></script>
+    <script src="main.js"></script>
+</body>
+</html>

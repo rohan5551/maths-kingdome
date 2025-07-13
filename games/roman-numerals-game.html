@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roman Empire Numbers</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Comic Sans MS', 'Arial', sans-serif;
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .game-container {
+            background: white;
+            border-radius: 30px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            max-width: 700px;
+            width: 100%;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .roman-decoration {
+            position: absolute;
+            font-size: 100px;
+            opacity: 0.05;
+            color: #5f9ea0;
+            pointer-events: none;
+        }
+
+        .decoration-1 { top: -20px; left: -30px; transform: rotate(-15deg); }
+        .decoration-2 { bottom: -20px; right: -30px; transform: rotate(15deg); }
+
+        h1 {
+            color: #5f9ea0;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+            position: relative;
+            z-index: 1;
+        }
+
+        .emperor-icon {
+            display: inline-block;
+            animation: crown-bounce 2s ease-in-out infinite;
+        }
+
+        @keyframes crown-bounce {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            25% { transform: translateY(-5px) rotate(-5deg); }
+            75% { transform: translateY(-5px) rotate(5deg); }
+        }
+
+        .game-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            padding: 15px 25px;
+            border-radius: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .info-label {
+            font-size: 0.9em;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .info-value {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #5f9ea0;
+        }
+
+        .difficulty-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .difficulty-btn {
+            background: linear-gradient(135deg, #74b9ff 0%, #a29bfe 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 1em;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            font-weight: bold;
+        }
+
+        .difficulty-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .difficulty-btn.active {
+            background: linear-gradient(135deg, #5f9ea0 0%, #4682b4 100%);
+            transform: scale(1.1);
+        }
+
+        .question-container {
+            background: linear-gradient(135deg, #dfe6e9 0%, #b2bec3 100%);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .question-number {
+            font-size: 4em;
+            color: #2d3436;
+            font-weight: bold;
+            margin: 20px 0;
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .roman-input-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .roman-button {
+            background: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%);
+            color: white;
+            border: none;
+            width: 60px;
+            height: 60px;
+            font-size: 1.5em;
+            font-weight: bold;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .roman-button:hover {
+            transform: translateY(-3px) scale(1.1);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .roman-button:active {
+            transform: translateY(-1px);
+        }
+
+        .answer-display {
+            background: white;
+            border: 3px solid #6c5ce7;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2em;
+            font-weight: bold;
+            color: #2d3436;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+
+        .answer-display.correct {
+            border-color: #00b894;
+            background: linear-gradient(135deg, #55efc4 0%, #00b894 100%);
+            color: white;
+        }
+
+        .answer-display.incorrect {
+            border-color: #ee5a6f;
+            background: linear-gradient(135deg, #f8b5c1 0%, #ee5a6f 100%);
+            color: white;
+            animation: shake 0.5s ease-in-out;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        .control-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .control-btn {
+            background: linear-gradient(135deg, #00b894 0%, #00cec9 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.1em;
+            font-weight: bold;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .control-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .control-btn:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .clear-btn {
+            background: linear-gradient(135deg, #ff9ff3 0%, #feca57 100%);
+        }
+
+        .hint-btn {
+            background: linear-gradient(135deg, #a8edea 0%, #81ecec 100%);
+        }
+
+        .message {
+            font-size: 1.3em;
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 15px;
+            font-weight: bold;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hint-container {
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            border-radius: 15px;
+            padding: 15px;
+            margin: 20px 0;
+            font-size: 1.1em;
+            color: #2d3436;
+            display: none;
+        }
+
+        .roman-chart {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .chart-item {
+            background: white;
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .chart-roman {
+            font-size: 1.5em;
+            color: #5f9ea0;
+            font-weight: bold;
+        }
+
+        .chart-number {
+            font-size: 1em;
+            color: #636e72;
+        }
+
+        .sparkles {
+            position: absolute;
+            pointer-events: none;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+        }
+
+        .sparkle {
+            position: absolute;
+            font-size: 20px;
+            animation: sparkle-fall 1s ease-out forwards;
+        }
+
+        @keyframes sparkle-fall {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(50px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        @media (max-width: 600px) {
+            h1 { font-size: 2em; }
+            .question-number { font-size: 3em; }
+            .roman-button { width: 50px; height: 50px; font-size: 1.2em; }
+            .control-btn { padding: 12px 20px; font-size: 1em; }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div class="roman-decoration decoration-1">SPQR</div>
+        <div class="roman-decoration decoration-2">XII</div>
+        
+        <h1><span class="emperor-icon">👑</span> Roman Empire Numbers <span class="emperor-icon">👑</span></h1>
+        
+        <div class="game-info">
+            <div class="info-item">
+                <span class="info-label">Score</span>
+                <span class="info-value" id="score">0</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Level</span>
+                <span class="info-value" id="level">Easy</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Streak</span>
+                <span class="info-value" id="streak">0</span>
+            </div>
+        </div>
+        
+        <div class="difficulty-buttons">
+            <button class="difficulty-btn active" onclick="setDifficulty('easy')">Easy (1-10)</button>
+            <button class="difficulty-btn" onclick="setDifficulty('medium')">Medium (1-50)</button>
+            <button class="difficulty-btn" onclick="setDifficulty('hard')">Hard (1-100)</button>
+        </div>
+        
+        <div class="question-container">
+            <p style="font-size: 1.2em; color: #636e72; margin-bottom: 10px;">Convert this number to Roman numerals:</p>
+            <div class="question-number" id="questionNumber">5</div>
+        </div>
+        
+        <div class="answer-display" id="answerDisplay">
+            <span id="answerText">Your answer will appear here</span>
+            <div class="sparkles" id="sparkles"></div>
+        </div>
+        
+        <div class="roman-input-container">
+            <button class="roman-button" onclick="addRoman('I')">I</button>
+            <button class="roman-button" onclick="addRoman('V')">V</button>
+            <button class="roman-button" onclick="addRoman('X')">X</button>
+            <button class="roman-button" onclick="addRoman('L')">L</button>
+            <button class="roman-button" onclick="addRoman('C')">C</button>
+        </div>
+        
+        <div class="control-buttons">
+            <button class="control-btn hint-btn" onclick="showHint()">💡 Hint</button>
+            <button class="control-btn clear-btn" onclick="clearAnswer()">🗑️ Clear</button>
+            <button class="control-btn" onclick="checkAnswer()">✅ Check</button>
+            <button class="control-btn" onclick="nextQuestion()">➡️ Next</button>
+        </div>
+        
+        <div class="hint-container" id="hintContainer">
+            <p><strong>Roman Numeral Guide:</strong></p>
+            <div class="roman-chart">
+                <div class="chart-item">
+                    <div class="chart-roman">I</div>
+                    <div class="chart-number">1</div>
+                </div>
+                <div class="chart-item">
+                    <div class="chart-roman">V</div>
+                    <div class="chart-number">5</div>
+                </div>
+                <div class="chart-item">
+                    <div class="chart-roman">X</div>
+                    <div class="chart-number">10</div>
+                </div>
+                <div class="chart-item">
+                    <div class="chart-roman">L</div>
+                    <div class="chart-number">50</div>
+                </div>
+                <div class="chart-item">
+                    <div class="chart-roman">C</div>
+                    <div class="chart-number">100</div>
+                </div>
+            </div>
+            <p style="margin-top: 10px; font-size: 0.9em;">Remember: Smaller values before larger values means subtraction (IV = 4)</p>
+        </div>
+        
+        <div id="message"></div>
+    </div>
+
+    <script>
+        let currentNumber = 5;
+        let currentAnswer = '';
+        let score = 0;
+        let streak = 0;
+        let difficulty = 'easy';
+        let difficulties = {
+            easy: { min: 1, max: 10, name: 'Easy' },
+            medium: { min: 1, max: 50, name: 'Medium' },
+            hard: { min: 1, max: 100, name: 'Hard' }
+        };
+
+        function toRoman(num) {
+            const romanNumerals = [
+                { value: 100, numeral: 'C' },
+                { value: 90, numeral: 'XC' },
+                { value: 50, numeral: 'L' },
+                { value: 40, numeral: 'XL' },
+                { value: 10, numeral: 'X' },
+                { value: 9, numeral: 'IX' },
+                { value: 5, numeral: 'V' },
+                { value: 4, numeral: 'IV' },
+                { value: 1, numeral: 'I' }
+            ];
+
+            let result = '';
+            for (const { value, numeral } of romanNumerals) {
+                while (num >= value) {
+                    result += numeral;
+                    num -= value;
+                }
+            }
+            return result;
+        }
+
+        function generateQuestion() {
+            const diff = difficulties[difficulty];
+            currentNumber = Math.floor(Math.random() * (diff.max - diff.min + 1)) + diff.min;
+            document.getElementById('questionNumber').textContent = currentNumber;
+            clearAnswer();
+            document.getElementById('message').innerHTML = '';
+            document.getElementById('hintContainer').style.display = 'none';
+        }
+
+        function addRoman(numeral) {
+            currentAnswer += numeral;
+            updateAnswerDisplay();
+            
+            // Add click animation
+            const display = document.getElementById('answerDisplay');
+            display.style.transform = 'scale(1.05)';
+            setTimeout(() => {
+                display.style.transform = 'scale(1)';
+            }, 100);
+        }
+
+        function updateAnswerDisplay() {
+            const answerText = document.getElementById('answerText');
+            if (currentAnswer === '') {
+                answerText.textContent = 'Your answer will appear here';
+                answerText.style.color = '#95a5a6';
+            } else {
+                answerText.textContent = currentAnswer;
+                answerText.style.color = '#2d3436';
+            }
+        }
+
+        function clearAnswer() {
+            currentAnswer = '';
+            updateAnswerDisplay();
+            const display = document.getElementById('answerDisplay');
+            display.className = 'answer-display';
+        }
+
+        function checkAnswer() {
+            const correctAnswer = toRoman(currentNumber);
+            const display = document.getElementById('answerDisplay');
+            const messageDiv = document.getElementById('message');
+            
+            if (currentAnswer === correctAnswer) {
+                display.className = 'answer-display correct';
+                score += 10;
+                streak++;
+                messageDiv.innerHTML = '<div class="message" style="color: #00b894;">🎉 Excellent! That\'s correct! 🎉</div>';
+                createSparkles();
+                updateScore();
+            } else {
+                display.className = 'answer-display incorrect';
+                streak = 0;
+                messageDiv.innerHTML = `<div class="message" style="color: #d63031;">😔 Not quite. The answer is ${correctAnswer}</div>`;
+                updateScore();
+            }
+        }
+
+        function createSparkles() {
+            const sparklesContainer = document.getElementById('sparkles');
+            sparklesContainer.innerHTML = '';
+            
+            const sparkleEmojis = ['✨', '⭐', '🌟', '💫', '🏆'];
+            for (let i = 0; i < 10; i++) {
+                const sparkle = document.createElement('div');
+                sparkle.className = 'sparkle';
+                sparkle.textContent = sparkleEmojis[Math.floor(Math.random() * sparkleEmojis.length)];
+                sparkle.style.left = Math.random() * 100 + '%';
+                sparkle.style.animationDelay = Math.random() * 0.5 + 's';
+                sparklesContainer.appendChild(sparkle);
+            }
+        }
+
+        function nextQuestion() {
+            generateQuestion();
+        }
+
+        function setDifficulty(level) {
+            difficulty = level;
+            document.querySelectorAll('.difficulty-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            document.getElementById('level').textContent = difficulties[level].name;
+            generateQuestion();
+        }
+
+        function showHint() {
+            const hintContainer = document.getElementById('hintContainer');
+            hintContainer.style.display = hintContainer.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function updateScore() {
+            document.getElementById('score').textContent = score;
+            document.getElementById('streak').textContent = streak;
+        }
+
+        // Initialize game
+        generateQuestion();
+    </script>
+</body>
+</html>

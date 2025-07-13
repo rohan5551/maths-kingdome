@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fun Subtraction Game</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Comic Sans MS', 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .game-container {
+            background: white;
+            border-radius: 30px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .game-container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 0, 150, 0.1) 0%, transparent 70%);
+            animation: float 10s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            50% { transform: translate(-50px, -50px) rotate(180deg); }
+        }
+
+        h1 {
+            color: #764ba2;
+            font-size: 2.5em;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+            animation: bounce 2s ease-in-out infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .buttons-container {
+            margin-bottom: 30px;
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        button {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.2em;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            font-weight: bold;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        button:active {
+            transform: translateY(-1px);
+        }
+
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .problem-container {
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 20px 0;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            position: relative;
+            z-index: 1;
+        }
+
+        .subtraction-grid {
+            display: inline-block;
+            text-align: right;
+            font-size: 2em;
+            font-family: 'Courier New', monospace;
+            color: #333;
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .number-row {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            margin: 10px 0;
+            gap: 10px;
+        }
+
+        .digit-box {
+            width: 50px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f0f0f0;
+            border-radius: 10px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .digit-input {
+            width: 50px;
+            height: 60px;
+            font-size: 1.5em;
+            text-align: center;
+            border: 3px solid #667eea;
+            border-radius: 10px;
+            background: white;
+            color: #333;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .digit-input:focus {
+            outline: none;
+            border-color: #f093fb;
+            transform: scale(1.1);
+            box-shadow: 0 0 15px rgba(240, 147, 251, 0.5);
+        }
+
+        .operator {
+            font-size: 1.2em;
+            color: #f5576c;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .divider {
+            height: 3px;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            margin: 10px 0;
+            border-radius: 3px;
+        }
+
+        .message {
+            font-size: 1.5em;
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 15px;
+            font-weight: bold;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .correct {
+            background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
+            color: #2d7a4a;
+        }
+
+        .incorrect {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            color: #a83232;
+        }
+
+        .stars {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .star {
+            position: absolute;
+            font-size: 30px;
+            animation: sparkle 3s linear infinite;
+        }
+
+        @keyframes sparkle {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .score {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            background: linear-gradient(135deg, #feca57 0%, #ff9ff3 100%);
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-size: 1.2em;
+            font-weight: bold;
+            color: white;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            z-index: 10;
+        }
+
+        @media (max-width: 600px) {
+            .digit-box, .digit-input {
+                width: 40px;
+                height: 50px;
+            }
+            
+            .digit-input {
+                font-size: 1.2em;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+            
+            button {
+                font-size: 1em;
+                padding: 12px 25px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div class="score" id="score">Score: 0</div>
+        <div class="stars" id="stars"></div>
+        <h1>🌟 Subtraction Magic! 🌟</h1>
+        
+        <div class="buttons-container">
+            <button id="newGameBtn" onclick="newGame()">🎮 New Game</button>
+            <button id="submitBtn" onclick="checkAnswer()" disabled>✅ Submit</button>
+            <button id="nextBtn" onclick="nextProblem()" style="display: none;">➡️ Next</button>
+        </div>
+        
+        <div id="problemContainer" class="problem-container" style="display: none;">
+            <div class="subtraction-grid">
+                <div class="number-row" id="topNumber"></div>
+                <div class="number-row">
+                    <span class="operator">−</span>
+                    <div id="bottomNumber" style="display: flex; gap: 10px;"></div>
+                </div>
+                <div class="divider"></div>
+                <div class="number-row" id="resultNumber"></div>
+            </div>
+        </div>
+        
+        <div id="message"></div>
+    </div>
+
+    <script>
+        let currentProblem = null;
+        let score = 0;
+        let problemsSolved = 0;
+
+        function generateRandomNumber(digits) {
+            const min = Math.pow(10, digits - 1);
+            const max = Math.pow(10, digits) - 1;
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        function createSubtractionProblem() {
+            const topDigits = Math.random() < 0.5 ? 5 : 6;
+            let top = generateRandomNumber(topDigits);
+            let bottom = generateRandomNumber(topDigits);
+            
+            // Ensure top is greater than bottom for positive result
+            if (bottom > top) {
+                [top, bottom] = [bottom, top];
+            }
+            
+            const result = top - bottom;
+            
+            // Convert to arrays of digits
+            const topArr = top.toString().split('').map(Number);
+            const bottomArr = bottom.toString().padStart(topArr.length, '0').split('').map(Number);
+            const resultArr = result.toString().padStart(topArr.length, '0').split('').map(Number);
+            
+            // Randomly hide some digits (about 30-40% of total digits)
+            const totalDigits = topArr.length + bottomArr.length + resultArr.length;
+            const digitsToHide = Math.floor(totalDigits * 0.35);
+            
+            const hiddenPositions = {
+                top: [],
+                bottom: [],
+                result: []
+            };
+            
+            // Track which columns have hidden digits to ensure only one per column
+            const columnsUsed = new Set();
+            
+            // Randomly select positions to hide
+            for (let i = 0; i < digitsToHide; i++) {
+                let row, pos;
+                let attempts = 0;
+                do {
+                    const rand = Math.random();
+                    if (rand < 0.33) {
+                        row = 'top';
+                    } else if (rand < 0.66) {
+                        row = 'bottom';
+                    } else {
+                        row = 'result';
+                    }
+                    pos = Math.floor(Math.random() * topArr.length);
+                    attempts++;
+                    
+                    // If we've tried too many times, just skip this digit
+                    if (attempts > 50) {
+                        break;
+                    }
+                } while (hiddenPositions[row].includes(pos) || columnsUsed.has(pos));
+                
+                if (attempts <= 50) {
+                    hiddenPositions[row].push(pos);
+                    columnsUsed.add(pos);
+                }
+            }
+            
+            return {
+                top: topArr,
+                bottom: bottomArr,
+                result: resultArr,
+                hiddenPositions: hiddenPositions
+            };
+        }
+
+        function displayProblem(problem) {
+            const topContainer = document.getElementById('topNumber');
+            const bottomContainer = document.getElementById('bottomNumber');
+            const resultContainer = document.getElementById('resultNumber');
+            
+            // Clear previous content
+            topContainer.innerHTML = '';
+            bottomContainer.innerHTML = '';
+            resultContainer.innerHTML = '';
+            
+            // Display top number
+            problem.top.forEach((digit, index) => {
+                if (problem.hiddenPositions.top.includes(index)) {
+                    const input = document.createElement('input');
+                    input.type = 'text';
+                    input.className = 'digit-input';
+                    input.maxLength = 1;
+                    input.dataset.answer = digit;
+                    input.dataset.row = 'top';
+                    input.dataset.position = index;
+                    input.addEventListener('input', handleInput);
+                    topContainer.appendChild(input);
+                } else {
+                    const box = document.createElement('div');
+                    box.className = 'digit-box';
+                    box.textContent = digit;
+                    topContainer.appendChild(box);
+                }
+            });
+            
+            // Display bottom number
+            problem.bottom.forEach((digit, index) => {
+                if (problem.hiddenPositions.bottom.includes(index)) {
+                    const input = document.createElement('input');
+                    input.type = 'text';
+                    input.className = 'digit-input';
+                    input.maxLength = 1;
+                    input.dataset.answer = digit;
+                    input.dataset.row = 'bottom';
+                    input.dataset.position = index;
+                    input.addEventListener('input', handleInput);
+                    bottomContainer.appendChild(input);
+                } else {
+                    const box = document.createElement('div');
+                    box.className = 'digit-box';
+                    box.textContent = digit;
+                    bottomContainer.appendChild(box);
+                }
+            });
+            
+            // Display result number
+            problem.result.forEach((digit, index) => {
+                if (problem.hiddenPositions.result.includes(index)) {
+                    const input = document.createElement('input');
+                    input.type = 'text';
+                    input.className = 'digit-input';
+                    input.maxLength = 1;
+                    input.dataset.answer = digit;
+                    input.dataset.row = 'result';
+                    input.dataset.position = index;
+                    input.addEventListener('input', handleInput);
+                    resultContainer.appendChild(input);
+                } else {
+                    const box = document.createElement('div');
+                    box.className = 'digit-box';
+                    box.textContent = digit;
+                    resultContainer.appendChild(box);
+                }
+            });
+        }
+
+        function handleInput(event) {
+            const input = event.target;
+            input.value = input.value.replace(/[^0-9]/g, '');
+            
+            // Check if all inputs are filled
+            const allInputs = document.querySelectorAll('.digit-input');
+            const allFilled = Array.from(allInputs).every(inp => inp.value !== '');
+            
+            document.getElementById('submitBtn').disabled = !allFilled;
+            
+            // Auto-focus next input
+            if (input.value && allInputs.length > 0) {
+                const currentIndex = Array.from(allInputs).indexOf(input);
+                if (currentIndex < allInputs.length - 1) {
+                    allInputs[currentIndex + 1].focus();
+                }
+            }
+        }
+
+        function checkAnswer() {
+            const inputs = document.querySelectorAll('.digit-input');
+            let correct = true;
+            
+            inputs.forEach(input => {
+                if (input.value === input.dataset.answer) {
+                    input.style.backgroundColor = '#84fab0';
+                    input.style.borderColor = '#2d7a4a';
+                } else {
+                    input.style.backgroundColor = '#fa709a';
+                    input.style.borderColor = '#a83232';
+                    correct = false;
+                }
+            });
+            
+            const messageDiv = document.getElementById('message');
+            if (correct) {
+                score += 10;
+                problemsSolved++;
+                messageDiv.innerHTML = '<div class="message correct">🎉 Fantastic! You got it right! 🎉</div>';
+                createStars();
+                document.getElementById('submitBtn').style.display = 'none';
+                document.getElementById('nextBtn').style.display = 'inline-block';
+            } else {
+                messageDiv.innerHTML = '<div class="message incorrect">🤔 Not quite right. Try again! 🤔</div>';
+            }
+            
+            document.getElementById('score').textContent = `Score: ${score}`;
+            
+            // Disable inputs after submission
+            inputs.forEach(input => input.disabled = true);
+            document.getElementById('submitBtn').disabled = true;
+        }
+
+        function createStars() {
+            const starsContainer = document.getElementById('stars');
+            starsContainer.innerHTML = '';
+            
+            for (let i = 0; i < 10; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.textContent = '⭐';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.animationDelay = Math.random() * 3 + 's';
+                star.style.fontSize = (20 + Math.random() * 20) + 'px';
+                starsContainer.appendChild(star);
+            }
+            
+            setTimeout(() => {
+                starsContainer.innerHTML = '';
+            }, 3000);
+        }
+
+        function newGame() {
+            currentProblem = createSubtractionProblem();
+            displayProblem(currentProblem);
+            
+            document.getElementById('problemContainer').style.display = 'block';
+            document.getElementById('submitBtn').style.display = 'inline-block';
+            document.getElementById('submitBtn').disabled = true;
+            document.getElementById('nextBtn').style.display = 'none';
+            document.getElementById('message').innerHTML = '';
+            
+            // Focus first input
+            setTimeout(() => {
+                const firstInput = document.querySelector('.digit-input');
+                if (firstInput) firstInput.focus();
+            }, 100);
+        }
+
+        function nextProblem() {
+            newGame();
+        }
+
+        // Initialize with welcome message
+        document.getElementById('message').innerHTML = '<div class="message">🎮 Click "New Game" to start playing! 🎮</div>';
+    </script>
+</body>
+</html>
