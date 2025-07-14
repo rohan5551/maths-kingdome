@@ -32,6 +32,17 @@ const GAMES = [
         description: 'Master addition of three 5-6 digit numbers with carry-over tracking. Perfect for advanced addition practice!',
         skills: ['Addition', 'Carry-over', 'Mental Math', 'Place Value'],
         file: 'games/addition-carry-game.html',
+        isNew: false
+    },
+    {
+        id: 'rounding-rocket',
+        title: 'Rounding Rocket',
+        icon: '🚀',
+        difficulty: 'Easy-Medium',
+        ageRange: '7-10 years',
+        description: 'Blast off with rounding! Learn to round numbers to the nearest 10, 100, or 1000 in this space-themed adventure.',
+        skills: ['Rounding', 'Number Sense', 'Estimation', 'Place Value'],
+        file: 'games/rounding-game.html',
         isNew: true
     }
     // Add more games here in the future

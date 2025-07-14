@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Rounding Game</title>
+    <style>
+        body {
+            font-family: 'Comic Sans MS', 'Arial', sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            background: linear-gradient(135deg, #ffeaa7 0%, #fab1a0 50%, #fd79a8 100%);
+            padding: 40px;
+            border-radius: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+        }
+        .container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transform: rotate(45deg);
+            animation: shimmer 3s infinite;
+        }
+        .container::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(255, 255, 255, 0.2) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.2) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+        }
+        @keyframes shimmer {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+        h1 {
+            color: white;
+            font-size: 48px;
+            margin-bottom: 30px;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.3);
+            position: relative;
+            z-index: 1;
+        }
+        .stats {
+            margin: 20px 0;
+            font-size: 24px;
+            color: #666;
+            font-weight: bold;
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+        }
+        .stats span {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .number {
+            font-size: 96px;
+            color: #333;
+            margin: 40px 0;
+            font-weight: bold;
+            animation: floating 3s ease-in-out infinite;
+            text-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        @keyframes floating {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        button {
+            font-size: 20px;
+            padding: 15px 30px;
+            margin: 10px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+        .level-btn {
+            background: linear-gradient(135deg, #48c6ef 0%, #6f86d6 100%);
+            font-size: 18px;
+            padding: 12px 25px;
+        }
+        .answer-btn {
+            font-size: 24px;
+            padding: 15px 40px;
+            margin: 10px;
+            background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
+            color: #333;
+            font-weight: bold;
+        }
+        .answer-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+        .answer-btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.5;
+            background: #ccc;
+        }
+        #message {
+            font-size: 24px;
+            margin: 20px auto;
+            padding: 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            max-width: 500px;
+            animation: bounceIn 0.5s ease-out;
+        }
+        @keyframes bounceIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.3);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            70% {
+                transform: scale(0.9);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        .correct {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+            box-shadow: 0 5px 15px rgba(17, 153, 142, 0.3);
+        }
+        .wrong {
+            background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%);
+            color: white;
+            box-shadow: 0 5px 15px rgba(235, 51, 73, 0.3);
+        }
+        .active {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%) !important;
+            transform: scale(1.1);
+            box-shadow: 0 8px 25px rgba(240, 147, 251, 0.4) !important;
+        }
+        input[type="number"] {
+            font-size: 28px;
+            padding: 15px 20px;
+            margin: 10px;
+            border: 3px solid #667eea;
+            border-radius: 15px;
+            text-align: center;
+            width: 250px;
+            font-weight: bold;
+            color: #333;
+            background: rgba(255, 255, 255, 0.9);
+            transition: all 0.3s ease;
+        }
+        input[type="number"]:focus {
+            outline: none;
+            border-color: #f093fb;
+            box-shadow: 0 0 20px rgba(240, 147, 251, 0.3);
+            transform: scale(1.05);
+        }
+        .sparkle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: #ffd700;
+            border-radius: 50%;
+            animation: sparkle 1.5s linear infinite;
+        }
+        @keyframes sparkle {
+            0% {
+                opacity: 0;
+                transform: scale(0) rotate(0deg);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1) rotate(180deg);
+            }
+            100% {
+                opacity: 0;
+                transform: scale(0) rotate(360deg);
+            }
+        }
+        .next-btn {
+            background: linear-gradient(135deg, #f7b733 0%, #fc4a1a 100%);
+            font-size: 22px;
+            padding: 15px 40px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 Rounding Game</h1>
+        
+        <div class="stats">
+            Score: <span id="score">0</span> | 
+            Level: <span id="level">10</span>
+        </div>
+        
+        <div>
+            <button onclick="setLevel(10)" id="btn10" class="level-btn active">Round to 10</button>
+            <button onclick="setLevel(100)" id="btn100" class="level-btn">Round to 100</button>
+            <button onclick="setLevel(1000)" id="btn1000" class="level-btn">Round to 1000</button>
+        </div>
+        
+        <div class="number" id="number">0</div>
+        
+        <div id="answers"></div>
+        
+        <div id="message"></div>
+        
+        <button onclick="nextQuestion()" class="next-btn">Next Question</button>
+    </div>
+
+    <script>
+        let number = 0;
+        let level = 10;
+        let correct = 0;
+        let score = 0;
+
+        function setLevel(newLevel) {
+            level = newLevel;
+            document.getElementById('level').innerText = level;
+            
+            // Update button styles
+            document.getElementById('btn10').className = 'level-btn';
+            document.getElementById('btn100').className = 'level-btn';
+            document.getElementById('btn1000').className = 'level-btn';
+            document.getElementById('btn' + level).className = 'level-btn active';
+            
+            nextQuestion();
+        }
+
+        function nextQuestion() {
+            // Generate random 4-5 digit numbers
+            if (level == 10) {
+                number = Math.floor(Math.random() * 90000) + 10000; // 10000-99999
+            } else if (level == 100) {
+                number = Math.floor(Math.random() * 90000) + 10000; // 10000-99999
+            } else {
+                number = Math.floor(Math.random() * 90000) + 10000; // 10000-99999
+            }
+            
+            // Calculate correct answer
+            correct = Math.round(number / level) * level;
+            
+            // Display number
+            document.getElementById('number').innerText = number;
+            
+            // Create input field for answer
+            const html = `
+                <input type="number" id="answerInput" placeholder="Enter your answer...">
+                <br>
+                <button class="answer-btn" onclick="checkAnswer()" style="margin-top: 10px;">Submit Answer</button>
+            `;
+            document.getElementById('answers').innerHTML = html;
+            
+            // Clear message
+            document.getElementById('message').innerHTML = '';
+            
+            // Focus on input field
+            setTimeout(() => {
+                document.getElementById('answerInput').focus();
+            }, 100);
+            
+            // Allow Enter key to submit
+            document.getElementById('answerInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    checkAnswer();
+                }
+            });
+        }
+
+        function checkAnswer() {
+            const userAnswer = parseInt(document.getElementById('answerInput').value);
+            const msg = document.getElementById('message');
+            
+            if (userAnswer === correct) {
+                score += 10;
+                document.getElementById('score').innerText = score;
+                msg.innerHTML = '✓ Correct!';
+                msg.className = 'correct';
+            } else {
+                msg.innerHTML = `✗ Wrong. The answer is ${correct}`;
+                msg.className = 'wrong';
+            }
+            
+            // Disable input and submit button
+            document.getElementById('answerInput').disabled = true;
+            const submitBtn = document.querySelector('.answer-btn');
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.style.background = '#ccc';
+            }
+        }
+
+        // Start game
+        nextQuestion();
+    </script>
+</body>
+</html>

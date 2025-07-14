@@ -1,25 +1,98 @@
 // Main JavaScript for Math Magic Kingdom
+console.log('Main.js loaded!');
+
+// Handle escape key to close modal
+function handleEscapeKey(event) {
+    if (event.key === 'Escape') {
+        window.closeGame();
+    }
+}
+
+// Define global functions first
+window.openGame = function(gameFile, gameTitle) {
+    console.log('Opening game:', gameFile);
+    const modal = document.getElementById('gameModal');
+    const frame = document.getElementById('gameFrame');
+    
+    if (!modal || !frame) {
+        console.error('Modal or frame not found');
+        return;
+    }
+    
+    // Set the game source
+    console.log('Setting frame src to:', gameFile);
+    frame.src = gameFile;
+    
+    // Log when iframe loads
+    frame.onload = function() {
+        console.log('Game loaded successfully:', gameFile);
+    };
+    
+    frame.onerror = function() {
+        console.error('Error loading game:', gameFile);
+    };
+    
+    // Show the modal
+    modal.style.display = 'block';
+    console.log('Modal displayed');
+    
+    // Add escape key listener
+    document.addEventListener('keydown', handleEscapeKey);
+    
+    // Prevent body scroll when modal is open
+    document.body.style.overflow = 'hidden';
+}
+
+window.closeGame = function() {
+    const modal = document.getElementById('gameModal');
+    const frame = document.getElementById('gameFrame');
+    
+    if (!modal || !frame) return;
+    
+    // Hide the modal
+    modal.style.display = 'none';
+    
+    // Clear the frame source
+    frame.src = '';
+    
+    // Remove escape key listener
+    document.removeEventListener('keydown', handleEscapeKey);
+    
+    // Restore body scroll
+    document.body.style.overflow = 'auto';
+}
 
 // Load games when page loads
 document.addEventListener('DOMContentLoaded', () => {
+    console.log('DOM loaded, loading games...');
     loadGames();
     addFloatingAnimation();
 });
 
 // Function to load and display all games
 function loadGames() {
+    console.log('LoadGames called');
     const gallery = document.getElementById('gamesGallery');
     
-    if (!gallery) return;
+    if (!gallery) {
+        console.error('Gallery not found!');
+        return;
+    }
+    
+    console.log('GAMES:', typeof GAMES, GAMES);
     
     // Clear existing content
     gallery.innerHTML = '';
     
     // Create game cards
-    GAMES.forEach(game => {
-        const gameCard = createGameCard(game);
-        gallery.appendChild(gameCard);
-    });
+    if (typeof GAMES !== 'undefined') {
+        GAMES.forEach(game => {
+            const gameCard = createGameCard(game);
+            gallery.appendChild(gameCard);
+        });
+    } else {
+        console.error('GAMES is not defined!');
+    }
 }
 
 // Function to create a game card element
@@ -40,7 +113,7 @@ function createGameCard(game) {
             <div class="game-skills">
                 ${game.skills.map(skill => `<span class="skill-tag">${skill}</span>`).join('')}
             </div>
-            <button class="play-button" onclick="openGame('${game.file}', '${game.title}')">
+            <button class="play-button" onclick="window.openGame('${game.file}', '${game.title}')">
                 Play Now! 🎮
             </button>
         </div>
@@ -49,57 +122,12 @@ function createGameCard(game) {
     return card;
 }
 
-// Function to open a game in modal
-function openGame(gameFile, gameTitle) {
-    const modal = document.getElementById('gameModal');
-    const frame = document.getElementById('gameFrame');
-    
-    if (!modal || !frame) return;
-    
-    // Set the game source
-    frame.src = gameFile;
-    
-    // Show the modal
-    modal.style.display = 'block';
-    
-    // Add escape key listener
-    document.addEventListener('keydown', handleEscapeKey);
-    
-    // Prevent body scroll when modal is open
-    document.body.style.overflow = 'hidden';
-}
 
-// Function to close the game modal
-function closeGame() {
-    const modal = document.getElementById('gameModal');
-    const frame = document.getElementById('gameFrame');
-    
-    if (!modal || !frame) return;
-    
-    // Hide the modal
-    modal.style.display = 'none';
-    
-    // Clear the frame source
-    frame.src = '';
-    
-    // Remove escape key listener
-    document.removeEventListener('keydown', handleEscapeKey);
-    
-    // Restore body scroll
-    document.body.style.overflow = 'auto';
-}
-
-// Handle escape key to close modal
-function handleEscapeKey(event) {
-    if (event.key === 'Escape') {
-        closeGame();
-    }
-}
 
 // Close modal when clicking outside
 document.getElementById('gameModal')?.addEventListener('click', (event) => {
     if (event.target === event.currentTarget) {
-        closeGame();
+        window.closeGame();
     }
 });
 
