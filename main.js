@@ -189,3 +189,10 @@ console.log('%c🏰 Welcome to Math Magic Kingdom! 🏰',
     'font-size: 20px; color: #764ba2; font-weight: bold; text-shadow: 2px 2px 4px rgba(0,0,0,0.2);');
 console.log('%cWhere learning math is an adventure!', 
     'font-size: 14px; color: #667eea; font-style: italic;');
+
+// Initialize the page when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM loaded, initializing games...');
+    loadGames();
+    addFloatingAnimation();
+});
